@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fat Loss">
+  <meta name="theme-color" content="#000000">
+  <meta name="format-detection" content="telephone=no">
+  <title>Fat Loss</title>
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="icon" type="image/png" href="icon-180.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">FAT LOSS</h1>
+    <button type="button" class="btn btn-ghost" id="openSettings">Settings</button>
+  </header>
+
+  <!-- ===== MAIN VIEW ===== -->
+  <main id="mainView">
+    <section class="hero" aria-live="polite">
+      <div class="hero-date" id="todayDate"></div>
+      <div class="hero-label">Today's net deficit</div>
+      <div class="big" id="todayNum">—</div>
+      <div class="big-unit" id="todayUnit"></div>
+    </section>
+
+    <section class="avg" aria-live="polite">
+      <div class="label">7-day average deficit</div>
+      <div class="avg-line"><span class="avg-num" id="avgNum">—</span> <span class="avg-unit" id="avgUnit"></span></div>
+      <div class="flag" id="avgFlag"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Today breakdown</h2>
+      <table class="breakdown" id="todayTable"></table>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Log a day</h2>
+      <form id="dayForm" novalidate autocomplete="off">
+        <label class="field">
+          <span>Date</span>
+          <input type="date" id="fDate" required>
+        </label>
+        <label class="field">
+          <span>Calories eaten</span>
+          <input type="text" id="fCalories" inputmode="decimal" placeholder="e.g. 1900">
+        </label>
+        <label class="field">
+          <span>Protein (g)</span>
+          <input type="text" id="fProtein" inputmode="decimal" placeholder="e.g. 140">
+        </label>
+        <label class="field">
+          <span>Steps</span>
+          <input type="text" id="fSteps" inputmode="numeric" placeholder="e.g. 10000">
+        </label>
+        <div class="field">
+          <span>Workout done</span>
+          <div class="seg" role="group" aria-label="Workout done">
+            <button type="button" class="seg-btn" id="fWorkoutYes" aria-pressed="false">Yes</button>
+            <button type="button" class="seg-btn" id="fWorkoutNo" aria-pressed="true">No</button>
+          </div>
+        </div>
+        <label class="field">
+          <span>Workout kcal override <em>optional</em></span>
+          <input type="text" id="fWorkoutOverride" inputmode="decimal" placeholder="default">
+        </label>
+        <label class="field">
+          <span>Steps kcal override <em>optional</em></span>
+          <input type="text" id="fStepsOverride" inputmode="decimal" placeholder="default">
+        </label>
+
+        <div class="form-error" id="formError" role="alert"></div>
+
+        <div class="live">
+          <div class="live-head" id="liveHead"></div>
+          <table class="breakdown small" id="liveTable"></table>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="saveDay">Save</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ===== SETTINGS VIEW ===== -->
+  <section id="settingsView" hidden>
+    <div class="card">
+      <h2 class="card-title">Settings</h2>
+      <form id="settingsForm" novalidate autocomplete="off">
+        <label class="field">
+          <span>Weight (kg)</span>
+          <input type="text" id="sWeight" inputmode="decimal">
+        </label>
+        <label class="field">
+          <span>Body fat (%)</span>
+          <input type="text" id="sBodyFat" inputmode="decimal">
+        </label>
+        <div class="field readonly">
+          <span>Height</span>
+          <div class="ro">170 cm (5 ft 7 in)</div>
+        </div>
+        <label class="field">
+          <span>Age (years)</span>
+          <input type="text" id="sAge" inputmode="numeric">
+        </label>
+        <div class="field readonly">
+          <span>Sex</span>
+          <div class="ro">Male</div>
+        </div>
+        <label class="field">
+          <span>Baseline kcal</span>
+          <input type="text" id="sBaseline" inputmode="decimal">
+        </label>
+        <label class="field">
+          <span>kcal per step</span>
+          <input type="text" id="sKcalPerStep" inputmode="decimal">
+        </label>
+        <label class="field">
+          <span>Workout kcal</span>
+          <input type="text" id="sWorkoutKcal" inputmode="decimal">
+        </label>
+
+        <div class="note" id="sBmrPreview"></div>
+        <div class="note">BMR uses Katch-McArdle (weight and body fat). Age is stored but not used in the formula.</div>
+        <div class="form-error" id="settingsError" role="alert"></div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-ghost" id="closeSettings">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card backup">
+      <h2 class="card-title">Backup</h2>
+      <p class="note">Export saves settings and all days as a JSON file. Import replaces everything on this phone.</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-ghost" id="exportBtn">Export data</button>
+        <button type="button" class="btn btn-ghost" id="importBtn">Import data</button>
+      </div>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
